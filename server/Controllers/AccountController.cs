@@ -39,10 +39,11 @@ namespace server.Controllers
                     Id = Guid.NewGuid(),
                     Email = model.Email,
                     Password = PasswordHasher.HashPassword(model.Password),
+                    Role = model.Role
                 };
                 _context.Users.Add(newUser);
                 await _context.SaveChangesAsync();
-                return Ok();
+                return Ok("User created successfully");
             } catch(Exception ex)
             {
                 throw new Exception(ex.ToString());

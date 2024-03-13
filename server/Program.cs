@@ -6,6 +6,11 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var policyName = "MyPolicy";
+
+var clientUrl = "http://localhost:5173";
+var serverUrl = "http://localhost:5028";
+
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -32,6 +37,17 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
      };
  });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(policyName,
+                      policy =>
+                      {
+                          policy.WithOrigins(clientUrl, serverUrl)
+                                .AllowAnyHeader()
+                                .AllowAnyMethod();
+                      });
+});
+
 var app = builder.Build();
 
 app.UseHttpsRedirection();
@@ -41,5 +57,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseCors(policyName);
 
 app.Run();
