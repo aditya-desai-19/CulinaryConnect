@@ -6,6 +6,7 @@ using server.Migrations;
 using server.Models;
 using server.Services;
 using server.ViewModels;
+using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 
@@ -82,7 +83,20 @@ namespace server.Controllers
 
                     var token = new JwtSecurityTokenHandler().WriteToken(Sectoken);
 
-                    return Ok(token);
+                    if(token != null)
+                    {
+                        var userDetails = new LoginResponseVM
+                        {
+                            Email = user.Email,
+                            Role = user.Role,
+                            AccessToken = token
+                        };
+                        return Ok(userDetails);
+                    } else
+                    {
+                        throw new Exception("Token not generated");
+                    }
+
                 } else
                 {
                     return NotFound();

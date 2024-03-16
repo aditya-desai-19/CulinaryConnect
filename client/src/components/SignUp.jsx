@@ -1,8 +1,12 @@
-import React from 'react'
+import { useCallback } from 'react'
 import { api } from '../utils/Constants';
+import { useNavigate } from 'react-router-dom';
 
 const SignUp = () => {
-    const handleSubmit = async (e) => {
+
+    const navigate = useNavigate();
+
+    const handleSubmit = useCallback(async (e) => {
         e.preventDefault();
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const email = e.target[0].value;
@@ -27,6 +31,7 @@ const SignUp = () => {
                 if(response.status == 200 ) {
                     alert("Successfully signed up");
                 }
+                navigate('/login');
             } catch (error) {
                 console.log({error})
                 alert("Failed to sign up");
@@ -34,7 +39,8 @@ const SignUp = () => {
         } else {
             alert("Please enter valid email address");
         }
-    }
+    }, []);
+
     return (
         <form onSubmit={handleSubmit} className='flex flex-col items-center border-2 border-black h-52 w-52 mx-auto my-10'>
             <input type="email" placeholder="Email" required className='border-2 border-black m-4'/>

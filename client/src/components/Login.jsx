@@ -1,10 +1,14 @@
-//@ts-check
-import React from 'react'
+import { useContext, useCallback } from 'react'
 import { api } from '../utils/Constants';
-import Cookies from 'js-cookie'
+import { useNavigate } from 'react-router-dom';
+import AuthContext from '../utils/AuthContext';
 
 const Login = () => {
-    const handleSubmit = async (e) => {
+    const { handleLogin } = useContext(AuthContext);
+
+    const navigate = useNavigate();
+
+    const handleSubmit = useCallback( async (e) => {
         e.preventDefault();
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const email = e.target[0].value;
@@ -25,20 +29,21 @@ const Login = () => {
                     body: JSON.stringify(data)
                 };
                 const response = await fetch(`${api}/${endUrl}`, requestOptions);
-                const token = await response.text();
-                Cookies.set('authToken', token)
+                const details = await response.json();
+                handleLogin(details);
                 if (response.status == 200) {
                     alert("Successfully logged in");
                 }
                 e.target.reset();
+                navigate('/');
             } catch (error) {
-                console.log({error})
+                console.log({ error })
                 alert("Failed to login");
             }
         } else {
             alert("Please enter valid email address");
         }
-    }
+    }, [handleLogin]);
 
     return (
         <form onSubmit={handleSubmit} className='flex flex-col items-center border-2 border-black h-52 w-52 mx-auto my-10'>
